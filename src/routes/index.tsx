@@ -344,7 +344,7 @@ function Integrations() {
               key={i.name}
               className="glass-panel flex items-center gap-4 rounded-2xl p-5"
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[image:var(--gradient-brand)]/20 border border-border">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60">
                 <i.icon className="h-5 w-5 text-foreground" strokeWidth={1.8} />
               </span>
               <div className="min-w-0">
