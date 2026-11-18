@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Activity,
   ArrowRight,
@@ -6,8 +6,12 @@ import {
   Boxes,
   Braces,
   Database,
+  FileCheck2,
+  FileText,
   Globe,
+  ImageIcon,
   Plug,
+  Printer,
   ShieldCheck,
   Sparkles,
   Users,
@@ -42,6 +46,7 @@ const navLinks = [
   { label: "Product", href: "#product" },
   { label: "Integrations", href: "#integrations" },
   { label: "How It Works", href: "#how-it-works" },
+  { label: "Pipeline", href: "#pipeline" },
   { label: "Pricing", href: "#pricing" },
   { label: "Documentation", href: "#docs" },
 ];
@@ -112,6 +117,7 @@ function Landing() {
         <Hero />
         <Features />
         <HowItWorks />
+        <Pipeline />
         <Integrations />
         <ClosingCta />
       </main>
@@ -147,12 +153,12 @@ function Nav() {
               </li>
             ))}
           </ul>
-          <a
-            href="#cta"
+          <Link
+            to="/studio"
             className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[image:var(--gradient-brand)] px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--glow-brand)] transition-transform duration-300 hover:scale-[1.03]"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </nav>
     </header>
@@ -175,18 +181,18 @@ function Hero() {
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Power your website with intelligent AI integrations — without rebuilding your
-            entire stack.
+            Power your website with intelligent AI integrations — without rebuilding your entire
+            stack.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a
-              href="#cta"
+            <Link
+              to="/studio"
               className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[image:var(--gradient-brand)] px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--glow-brand)] transition-transform duration-300 hover:scale-[1.03]"
             >
               Connect Your Website
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
+            </Link>
             <a
               href="#integrations"
               className="inline-flex items-center justify-center rounded-xl border border-border bg-glass px-6 py-3.5 text-sm font-semibold backdrop-blur-md transition-colors duration-300 hover:border-primary/50 hover:bg-secondary/50"
@@ -237,9 +243,7 @@ function SectionHead({
 }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <span className="text-xs font-semibold tracking-[0.22em] text-cyan uppercase">
-        {eyebrow}
-      </span>
+      <span className="text-xs font-semibold tracking-[0.22em] text-cyan uppercase">{eyebrow}</span>
       <h2 className="mt-4 text-3xl font-bold sm:text-4xl">{title}</h2>
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{copy}</p>
     </div>
@@ -284,9 +288,7 @@ function HowItWorks() {
         <div className="grid gap-5 lg:grid-cols-3">
           {steps.map((s) => (
             <article key={s.num} className="glass-panel relative rounded-2xl p-7">
-              <span className="font-display text-4xl font-extrabold text-gradient">
-                {s.num}
-              </span>
+              <span className="font-display text-4xl font-extrabold text-gradient">{s.num}</span>
               <h3 className="mt-4 text-xl font-semibold">{s.title}</h3>
               <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{s.copy}</p>
             </article>
@@ -294,6 +296,108 @@ function HowItWorks() {
         </div>
       </div>
     </section>
+  );
+}
+
+const flows = [
+  {
+    name: "Design flow",
+    icon: ImageIcon,
+    accent: "border-orange-400/40 bg-orange-500/10",
+    iconCls: "text-orange-300",
+    steps: [
+      ["Parse prompt", "Intent, size, style"],
+      ["Gemini image model", "Prompt to design image"],
+      ["Print-ready file", "Resize, convert to PDF"],
+    ],
+    cta: { to: "/studio", label: "Open design chat" },
+  },
+  {
+    name: "Mock paper flow",
+    icon: FileText,
+    accent: "border-violet/40 bg-violet/10",
+    iconCls: "text-violet",
+    steps: [
+      ["Upload material", "Worksheets, past papers"],
+      ["Gemini text model", "Blueprint, questions, answers"],
+      ["Verify and render", "Marks check, HTML to PDF"],
+    ],
+    cta: { to: "/studio/papers", label: "Build a mock paper" },
+  },
+] as const;
+
+function Pipeline() {
+  return (
+    <section id="pipeline" className="relative mx-auto max-w-7xl px-5 py-24 lg:px-8">
+      <SectionHead
+        eyebrow="Pipeline"
+        title={<>From a student's prompt to paper in hand</>}
+        copy="One chatbot, one FastAPI backend, two AI flows — and every result lands in a confirmed, page-limited print queue."
+      />
+
+      <div className="mx-auto mt-14 flex max-w-4xl flex-col items-center">
+        <PipeNode title="Student chatbot" sub="Studio frontend" />
+        <span className="h-8 w-px bg-border" />
+        <PipeNode title="FastAPI backend" sub="Routes and orchestrates requests" />
+        <span className="h-8 w-px bg-border" />
+
+        <div className="grid w-full gap-5 md:grid-cols-2">
+          {flows.map((f) => (
+            <div key={f.name} className="rounded-2xl border border-dashed border-border p-5">
+              <h3 className="flex items-center justify-center gap-2 font-display font-semibold">
+                <f.icon className={`h-4 w-4 ${f.iconCls}`} /> {f.name}
+              </h3>
+              <ol className="mt-4 space-y-2">
+                {f.steps.map(([t, d], i) => (
+                  <li key={t} className="flex flex-col items-center">
+                    {i > 0 && <span className="h-3 w-px bg-border" />}
+                    <div className={`w-full rounded-xl border px-4 py-3 text-center ${f.accent}`}>
+                      <p className="text-sm font-semibold">{t}</p>
+                      <p className="text-xs text-muted-foreground">{d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <Link
+                to={f.cta.to}
+                className="mt-4 flex items-center justify-center gap-1.5 text-sm text-cyan hover:underline"
+              >
+                {f.cta.label} <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        <span className="h-8 w-px bg-border" />
+        <PipeNode title="Print queue" sub="Confirm, page limit" icon={FileCheck2} />
+        <span className="h-8 w-px bg-border" />
+        <PipeNode
+          title="Printer"
+          sub="Any printer the student's device uses — Wi-Fi, USB, Bluetooth"
+          icon={Printer}
+        />
+      </div>
+    </section>
+  );
+}
+
+function PipeNode({
+  title,
+  sub,
+  icon: Icon,
+}: {
+  title: string;
+  sub: string;
+  icon?: typeof Printer;
+}) {
+  return (
+    <div className="glass-panel flex w-full max-w-sm items-center justify-center gap-3 rounded-2xl px-5 py-4 text-center">
+      {Icon && <Icon className="h-4 w-4 shrink-0 text-cyan" />}
+      <div>
+        <p className="font-semibold">{title}</p>
+        <p className="text-xs text-muted-foreground">{sub}</p>
+      </div>
+    </div>
   );
 }
 
@@ -340,10 +444,7 @@ function Integrations() {
 
         <div className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {integrations.map((i) => (
-            <article
-              key={i.name}
-              className="glass-panel flex items-center gap-4 rounded-2xl p-5"
-            >
+            <article key={i.name} className="glass-panel flex items-center gap-4 rounded-2xl p-5">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-border bg-secondary/60">
                 <i.icon className="h-5 w-5 text-foreground" strokeWidth={1.8} />
               </span>
@@ -370,13 +471,13 @@ function ClosingCta() {
         <p className="relative mx-auto mt-5 max-w-xl text-sm text-muted-foreground sm:text-base">
           Build smarter digital experiences without the complexity.
         </p>
-        <a
-          href="#top"
+        <Link
+          to="/studio"
           className="group relative mt-10 inline-flex items-center gap-2 rounded-xl bg-[image:var(--gradient-brand)] px-7 py-4 text-sm font-semibold text-primary-foreground shadow-[var(--glow-brand)] transition-transform duration-300 hover:scale-[1.03]"
         >
           Start Connecting
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </a>
+        </Link>
       </div>
     </section>
   );
