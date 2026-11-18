@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { PrintDialog } from "@/components/studio/PrintDialog";
 import { Button } from "@/components/ui/button";
 import { api, fileUrl, type DesignRequest } from "@/lib/api";
+import { DEMO_MODE } from "@/lib/demo";
 
 export const Route = createFileRoute("/studio/")({
   component: DesignChat,
@@ -33,6 +34,7 @@ type Msg =
     };
 
 const SUGGESTIONS = [
+  ...(DEMO_MODE ? ["Create a house image"] : []),
   "A colourful A3 poster about the solar system",
   "A logo for our school eco club, minimal style",
   "A worksheet on fractions for class 5",

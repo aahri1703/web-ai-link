@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { api } from "@/lib/api";
 import { AuthProvider, useAuth } from "@/lib/auth";
+import { DEMO_MODE } from "@/lib/demo";
 
 export const Route = createFileRoute("/studio")({
   head: () => ({
@@ -71,6 +72,13 @@ function StudioShell() {
           {user && <UserMenu />}
         </div>
       </header>
+
+      {DEMO_MODE && (
+        <div className="relative border-b border-amber-400/40 bg-amber-400/10 px-4 py-2 text-center text-xs text-amber-200">
+          <strong>Demo mode</strong> — no AI is connected. Ask for a house to see a sample image,
+          then try printing it. The school printer is simulated.
+        </div>
+      )}
 
       <main className="relative mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-10">
         {loading ? (

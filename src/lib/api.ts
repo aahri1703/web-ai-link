@@ -1,5 +1,8 @@
 // Typed client for the FastAPI backend (../backend).
 // Base URL comes from VITE_API_URL (see .env.example); defaults to local dev.
+// With VITE_DEMO_MODE=true the design + print endpoints are served from memory
+// by lib/demo.ts instead, so the site works without a backend.
+import { DEMO_MODE, demoApi } from "@/lib/demo";
 
 export const API_URL = (import.meta.env["VITE_API_URL"] ?? "http://localhost:8000").replace(
   /\/$/,
@@ -9,6 +12,7 @@ export const API_URL = (import.meta.env["VITE_API_URL"] ?? "http://localhost:800
 /** Turns a backend-relative asset path (/files/...) into an absolute URL. */
 export function fileUrl(path: string | null | undefined): string | undefined {
   if (!path) return undefined;
+  if (path.startsWith("/demo/")) return path; // bundled demo assets (public/demo)
   return path.startsWith("http") ? path : `${API_URL}${path}`;
 }
 
@@ -269,7 +273,7 @@ export interface Health {
 // Endpoints
 // ---------------------------------------------------------------------------
 
-export const api = {
+const realApi = {
   health: () => request<Health>("/health"),
 
   // Design flow
@@ -310,3 +314,5 @@ export const api = {
   quota: () => request<PrintQuota>("/api/print-quota"),
   printer: () => request<PrinterStatus>("/api/printer"),
 };
+
+export const api: typeof realApi = DEMO_MODE ? { ...realApi, ...demoApi } : realApi;

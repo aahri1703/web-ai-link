@@ -4,6 +4,15 @@ import type { Auth, User } from "firebase/auth";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { setTokenGetter } from "@/lib/api";
+import { DEMO_MODE } from "@/lib/demo";
+
+// Demo mode skips Firebase sign-in so the site can be tried on any domain.
+const DEMO_USER = {
+  uid: "demo-student",
+  displayName: "Demo student",
+  email: null,
+  photoURL: null,
+} as unknown as User;
 
 const env = import.meta.env;
 
@@ -42,10 +51,11 @@ const AuthContext = createContext<AuthState>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(DEMO_MODE ? DEMO_USER : null);
+  const [loading, setLoading] = useState(!DEMO_MODE);
 
   useEffect(() => {
+    if (DEMO_MODE) return;
     let unsub = () => {};
     getFirebaseAuth().then(async (auth) => {
       const { onIdTokenChanged } = await import("firebase/auth");
@@ -60,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = async () => {
+    if (DEMO_MODE) return;
     const auth = await getFirebaseAuth();
     const { signOut } = await import("firebase/auth");
     await signOut(auth);
